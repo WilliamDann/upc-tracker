@@ -24,7 +24,8 @@ export default function()
             </Button>
             <br />
             <br />
-            <Link to="/search">Or seach with text →</Link>
+            <Link to="/search">Seach with text →</Link><br />
+            <Link to="/create">Enter manually →</Link>
         </>
     )
 }
