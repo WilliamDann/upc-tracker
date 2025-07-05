@@ -100,6 +100,11 @@ func (h *ProductHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "{}")
 }
 
+// TODO implement actual search!
+func (h *ProductHandler) Search(w http.ResponseWriter, r *http.Request) {
+	h.GetAll(w, r) // this is temporary!
+}
+
 // create routes
 func (h *ProductHandler) Route(r *mux.Router) {
 	r.HandleFunc("/api/products/all", h.GetAll).Methods("GET")
