@@ -1,0 +1,37 @@
+import { Link }                  from "react-router-dom"
+import { Search, Camera } from "react-bootstrap-icons"
+
+export default function()
+{
+    return (
+        <>
+            <div className="d-flex flex-column flex-shrink-0 p-2 text-white bg-dark h-100" style={{width: '200px'}}>
+                <Link to="/" className="d-flex text-white text-decoration-none">
+                    <svg className="bi me-2" width="40" height="32"><use xlinkHref="#bootstrap"></use></svg>
+                    <span className="fs-4">UPC Tracker, MyPlace</span>
+                </Link>
+                <br />
+                <ul className="nav nav-pills flex-column mb-auto">
+
+                <li>
+                    <Link to="search" className="nav-link text-white">
+                        <Search />
+                        <span> Search Items</span>
+                    </Link>
+                </li>
+                <li>
+                    <Link to="scan" className="nav-link text-white inline">
+                       <Camera />
+                        <span> Scan Item</span>
+                    </Link>
+                </li>
+                </ul>
+                <hr />
+
+                <Link to="#" className="d-flex align-items-center text-white text-decoration-none">
+                    <strong>My Account</strong>
+                </Link>
+            </div>
+        </>
+    )
+}
