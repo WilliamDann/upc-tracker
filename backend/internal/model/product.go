@@ -1,5 +1,9 @@
 package model
 
+import (
+	"github.com/WilliamDann/upc-tracker/backend/pkg/upc"
+)
+
 type Product struct {
 	ID   string `json:"id"`
 	UPC  string `json:"upc"`
@@ -15,8 +19,6 @@ func (p *Product) SetID(id string) {
 }
 
 // returns true if the product is valid
-//
-//	TODO parsing UPC code?
 func (p *Product) Validate() bool {
-	return p.Name != "" && p.UPC != ""
+	return p.Name != "" && upc.IsUPC(p.UPC)
 }
