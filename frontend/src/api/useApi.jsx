@@ -23,7 +23,7 @@ export async function apiCall(endpoint, opts)
     return {data, error};
 }
 
-export default function useApi({endpoint, opts})
+export default function useApi(endpoint, opts)
 {
     const [data, setData]        = useState(null);
     const [loading, setLoading]  = useState(true);

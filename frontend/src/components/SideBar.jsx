@@ -1,5 +1,5 @@
 import { Link }                  from "react-router-dom"
-import { Search, Camera } from "react-bootstrap-icons"
+import { Search, Camera, Box2 } from "react-bootstrap-icons"
 
 export default function()
 {
@@ -14,9 +14,9 @@ export default function()
                 <ul className="nav nav-pills flex-column mb-auto">
 
                 <li>
-                    <Link to="search" className="nav-link text-white">
-                        <Search />
-                        <span> Search Items</span>
+                    <Link to="products" className="nav-link text-white">
+                        <Box2 />
+                        <span> Products</span>
                     </Link>
                 </li>
                 <li>
