@@ -12,6 +12,7 @@ import Home from './Home.jsx';
 import List from './components/Products/List.jsx'
 import View from './components/Products/View.jsx'
 import Edit from './components/Products/Edit.jsx';
+import Create from './components/Products/Create.jsx';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
           <Route index element={<List />} />
           <Route path='/products/view/:id' element={<View />} />
           <Route path='/products/edit/:id' element={<Edit />} />
+          <Route path='/products/create/' element={<Create />} />
         </Route>
       </Route>
 
