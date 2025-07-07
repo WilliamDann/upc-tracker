@@ -2,17 +2,15 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router'
 
 import App from './App.jsx'
-import NotFound from './NotFound.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Search from './Search.jsx';
-import Scan from './Scan.jsx'
+import Search from './pages/Search.jsx';
+import Scan from './pages/Scan.jsx'
 import Home from './Home.jsx';
 
-import List from './components/Products/List.jsx'
-import View from './components/Products/View.jsx'
-import Edit from './components/Products/Edit.jsx';
-import Create from './components/Products/Create.jsx';
+import Product from './resources/Product.jsx'
+import Account from './resources/Account.jsx'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -24,13 +22,10 @@ createRoot(document.getElementById('root')).render(
         <Route path="search" element={<Search />} />
         <Route path="scan" element={<Scan />} />
 
-        <Route path='/products'>
-          <Route index element={<List />} />
-          <Route path='/products/view/:id' element={<View />} />
-          <Route path='/products/edit/:id' element={<Edit />} />
-          <Route path='/products/create/' element={<Create />} />
-        </Route>
+        {new Product().Routes()}
+        {new Account().Routes()}
       </Route>
+
 
     </Routes>
   </BrowserRouter>,
