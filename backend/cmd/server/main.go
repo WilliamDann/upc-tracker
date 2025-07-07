@@ -16,12 +16,15 @@ func main() {
 
 	// create repos
 	productRepo := repository.NewInMemoryRepo[*model.Product]()
+	accountRepo := repository.NewInMemoryRepo[*model.Account]()
 
 	// create handlers
 	productHander := handlers.NewProductHandler(productRepo)
+	accountHandler := handlers.NewAccountHandler(accountRepo)
 
 	// create routes
 	productHander.Route(r)
+	accountHandler.Route(r)
 
 	// Start server
 	fmt.Println("Server running on http://localhost:8080")
