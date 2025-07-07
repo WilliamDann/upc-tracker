@@ -1,5 +1,5 @@
 import { Link }                  from "react-router-dom"
-import { Search, Camera, Box2 } from "react-bootstrap-icons"
+import { PersonFillGear, Camera, Box2 } from "react-bootstrap-icons"
 
 export default function()
 {
@@ -13,6 +13,13 @@ export default function()
                 <br />
                 <ul className="nav nav-pills flex-column mb-auto">
 
+
+                <li>
+                    <Link to="accounts" className="nav-link text-white">
+                        <PersonFillGear />
+                        <span> Accounts</span>
+                    </Link>
+                </li>
                 <li>
                     <Link to="products" className="nav-link text-white">
                         <Box2 />

@@ -135,12 +135,12 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 // routes
 func (h *AccountHandler) Route(r *mux.Router) {
-	r.HandleFunc("/api/account/all", h.BaseHander.GetAll).Methods("GET")
-	r.HandleFunc("/api/account/{id}", h.BaseHander.GetById).Methods("GET")
+	r.HandleFunc("/api/accounts/all", h.BaseHander.GetAll).Methods("GET")
+	r.HandleFunc("/api/accounts/{id}", h.BaseHander.GetById).Methods("GET")
 
-	r.HandleFunc("/api/account", h.Create).Methods("POST")
-	r.HandleFunc("/api/account/{id}", h.Update).Methods("PUT")
-	r.HandleFunc("/api/account/{id}", h.Delete).Methods("DELETE")
+	r.HandleFunc("/api/accounts", h.Create).Methods("POST")
+	r.HandleFunc("/api/accounts/{id}", h.Update).Methods("PUT")
+	r.HandleFunc("/api/accounts/{id}", h.Delete).Methods("DELETE")
 
-	r.HandleFunc("/api/account/authenticate", h.Authenticate).Methods("POST")
+	r.HandleFunc("/api/accounts/authenticate", h.Authenticate).Methods("POST")
 }
