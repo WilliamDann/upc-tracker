@@ -1,6 +1,6 @@
 import useApi from "../api/useApi";
 import Resource from "./Resource";
-import {Route, Link} from 'react-router-dom'
+import {Route, Link, useNavigate} from 'react-router-dom'
 import {Button} from 'react-bootstrap'
 import Table from '../components/Table'
 import Signin from "../pages/Signin";
@@ -16,12 +16,13 @@ export default class Account extends Resource {
     // page for reading your own account
     My = () =>
     {
+        const navigate                = useNavigate()
         const {data, loading, error} = useApi(`/api/accounts/my`);
 
         if (loading)
             return <p>Loading...</p>
         if (error)
-            console.error(error)
+            navigate('/signin')
 
         return (
             <>

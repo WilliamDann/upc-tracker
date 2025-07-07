@@ -6,6 +6,7 @@ import {Form, Button} from 'react-bootstrap'
 import { useNavigate } from 'react-router'
 
 import { apiCall } from '../api/useApi'
+import { Link } from 'react-router-dom'
 
 export default function()
 {
@@ -49,9 +50,11 @@ export default function()
                     <Button className="w-100 rounded m-2" type="submit">
                         Submit
                     </Button>
-                    <Button className="text-white w-100 rounded m-2">
-                        Or Create an Account
-                    </Button>
+                    <Link to="/accounts/create">
+                        <Button className="text-white w-100 rounded m-2">
+                            Or Create an Account
+                        </Button>
+                    </Link>
                     </Form>
                 </CenterFrostDiv>
             </PageGradient>
