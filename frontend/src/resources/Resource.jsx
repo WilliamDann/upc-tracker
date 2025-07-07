@@ -181,15 +181,16 @@ export default class Resource
     }
 
     // routes for this resource
-    Routes = () => {
+    Routes({children = null} = {}) {
         return (
-        <Route path={`/${this.resourceName}`}>
-          <Route index                                     element={ <this.Index /> } />
-          <Route path={`/${this.resourceName}/create/`}    element={ <this.Create /> } />
-          <Route path={`/${this.resourceName}/view/:id`}   element={ <this.Read /> } />
-          <Route path={`/${this.resourceName}/edit/:id`}   element={ <this.Update /> } />
-          <Route path={`/${this.resourceName}/delete/:id`} element={ <this.Delete /> } />
-        </Route>
+            <Route path={`/${this.resourceName}`}>
+                <Route index                                     element={ <this.Index /> } />
+                <Route path={`/${this.resourceName}/create/`}    element={ <this.Create /> } />
+                <Route path={`/${this.resourceName}/view/:id`}   element={ <this.Read /> } />
+                <Route path={`/${this.resourceName}/edit/:id`}   element={ <this.Update /> } />
+                <Route path={`/${this.resourceName}/delete/:id`} element={ <this.Delete /> } />
+                {children}
+            </Route>
         )
     }
 }

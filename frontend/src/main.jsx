@@ -5,6 +5,7 @@ import App from './App.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Search from './pages/Search.jsx';
 import Scan from './pages/Scan.jsx'
 import Home from './Home.jsx';
@@ -22,8 +23,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="search" element={<Search />} />
         <Route path="scan" element={<Scan />} />
 
-        {new Product().Routes()}
-        {new Account().Routes()}
+        {new Account().Routes({})}
+        {new Product().Routes({})}
       </Route>
 
 
