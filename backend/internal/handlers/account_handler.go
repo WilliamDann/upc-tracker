@@ -133,9 +133,30 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("{\"token\": \"" + tokenString + "\" }"))
 }
 
+// handler for reading your own accoutn
+func (h *AccountHandler) My(w http.ResponseWriter, r *http.Request) {
+	// get user claimed in jwt
+	authedId, ok := shared.GetAuthorizedUser(r)
+	if !ok {
+		http.Error(w, "permission error", http.StatusForbidden)
+		return
+	}
+
+	// get user from db
+	user, ok := h.BaseHander.repository.GetById(*authedId)
+	if !ok {
+		http.Error(w, "permission error", http.StatusForbidden)
+		return
+	}
+
+	// send info
+	json.NewEncoder(w).Encode(user)
+}
+
 // routes
 func (h *AccountHandler) Route(r *mux.Router) {
 	r.HandleFunc("/api/accounts/all", h.BaseHander.GetAll).Methods("GET")
+	r.HandleFunc("/api/accounts/my", h.My).Methods("GET")
 	r.HandleFunc("/api/accounts/{id}", h.BaseHander.GetById).Methods("GET")
 
 	r.HandleFunc("/api/accounts", h.Create).Methods("POST")
