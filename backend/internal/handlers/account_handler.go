@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -143,6 +144,7 @@ func (h *AccountHandler) My(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get user from db
+	fmt.Println(*authedId)
 	user, ok := h.BaseHander.repository.GetById(*authedId)
 	if !ok {
 		http.Error(w, "permission error", http.StatusForbidden)

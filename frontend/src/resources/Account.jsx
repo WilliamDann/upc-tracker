@@ -3,6 +3,9 @@ import Resource from "./Resource";
 import {Route, Link} from 'react-router-dom'
 import {Button} from 'react-bootstrap'
 import Table from '../components/Table'
+import Signin from "../pages/Signin";
+
+import Error from '../components/Error'
 
 export default class Account extends Resource {
     constructor()
@@ -17,31 +20,34 @@ export default class Account extends Resource {
 
         if (loading)
             return <p>Loading...</p>
+        if (error)
+            console.error(error)
 
         return (
             <>
                 <h3>My Account</h3>
                 <hr />
-                <Link to="edit">
+                <Table data={data} />
+                <br />
+                <br />
+                <Link className="p-1" to={`/accounts/edit/${data?.id}`}>
                     <Button>
                         Edit
                     </Button>
                 </Link>
-                <Link to="delete">
+                <Link className="p-1" to={`/accounts/delete/${data?.id}`}>
                     <Button>
                         Delete
                     </Button>
                 </Link>
-                <br />
-                <br />
-                
-                <Table data={data} />
             </>
         )
     }
 
     // register new routes
     Routes() {
-        return super.Routes({ children: <Route path='my' element={<this.My />} /> })
+        return super.Routes({ children: <>
+            <Route path='my' element={<this.My />} />
+        </> })
     }
 }

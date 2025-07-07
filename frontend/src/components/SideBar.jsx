@@ -35,7 +35,7 @@ export default function()
                 </ul>
                 <hr />
 
-                <Link to="account/my" className="d-flex align-items-center text-white text-decoration-none">
+                <Link to="accounts/my" className="d-flex align-items-center text-white text-decoration-none">
                     <strong>My Account</strong>
                 </Link>
             </div>

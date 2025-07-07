@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 
-export async function apiCall(endpoint, opts)
+export async function apiCall(endpoint, opts = {})
 {
     const baseApi = import.meta.env.VITE_BASE_API; 
     let data    = null;
     let error   = null;
     
-    console.log(baseApi + endpoint)
+    const token = window.sessionStorage.getItem("token")
+    if (token)
+    {
+        if (!opts['haders'])
+            opts['headers'] = {}
+        opts.headers.Authorization = `Bearer ${token}`
+    }
+
+    console.log(opts)
 
     try {
         const response = await fetch(baseApi + endpoint, opts)
-        const json     = await response.json();
-        
-        if (json.error)
-            return {data: null, error: json.error};
-
-        data = json;
+        data           = await response.json();;
     } catch (err) {
-        err = err;
+        error = err;
     }
     
     return {data, error};

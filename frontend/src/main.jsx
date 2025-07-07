@@ -13,6 +13,8 @@ import Home from './Home.jsx';
 import Product from './resources/Product.jsx'
 import Account from './resources/Account.jsx'
 
+import Signin from './pages/Signin.jsx'
+
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
@@ -27,6 +29,7 @@ createRoot(document.getElementById('root')).render(
         {new Product().Routes({})}
       </Route>
 
+      <Route path="signin" element={<Signin />} />
 
     </Routes>
   </BrowserRouter>,
