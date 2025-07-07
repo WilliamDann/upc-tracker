@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/WilliamDann/upc-tracker/backend/internal/model"
 	"github.com/WilliamDann/upc-tracker/backend/internal/repository"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 
 	"golang.org/x/crypto/bcrypt"
@@ -42,7 +44,6 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// hash password
-	fmt.Println(item.Password)
 	bytes, err := bcrypt.GenerateFromPassword([]byte(item.Password), bcrypt.DefaultCost)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -55,18 +56,62 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(item)
 }
 
+// handler for jwt creation
+func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
+	var item model.Account
+
+	// parse information from request body
+	err := json.NewDecoder(r.Body).Decode(&item)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// verify that an email and password exist
+	if item.Email == "" || item.Password == "" {
+		http.Error(w, "a username and password are required to create an account.", http.StatusBadRequest)
+		return
+	}
+
+	// lookup associated account
+	lookup, ok := h.BaseHander.repository.GetMatch(func(x *model.Account) bool { return x.Email == item.Email })
+	if !ok {
+		http.Error(w, "authentication error", http.StatusUnauthorized)
+		return
+	}
+
+	// check password
+	err = bcrypt.CompareHashAndPassword([]byte((*lookup).Password), []byte(item.Password))
+	if err != nil {
+		http.Error(w, "authentication error", http.StatusUnauthorized)
+		return
+	}
+
+	// create jwt
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": item.ID,                               // Subject (user id)
+		"exp": time.Now().Add(time.Hour * 24).Unix(), // Expiration
+		"iat": time.Now().Unix(),                     // Issued at
+	})
+
+	// sign & send
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte("{\"token\": \"" + tokenString + "\" }"))
+}
+
 // routes
 func (h *AccountHandler) Route(r *mux.Router) {
-	r.HandleFunc("/api/products/all", h.GetAll).Methods("GET")
+	r.HandleFunc("/api/account/all", h.GetAll).Methods("GET")
 
 	r.HandleFunc("/api/account", h.Create).Methods("POST")
 	r.HandleFunc("/api/account/{id}", h.BaseHander.GetById).Methods("GET")
 	r.HandleFunc("/api/account/{id}", h.BaseHander.Update).Methods("PUT")
 	r.HandleFunc("/api/account/{id}", h.BaseHander.Delete).Methods("DELETE")
-}
 
-// TODO
-// func CheckPasswordHash(password, hash string) bool {
-// 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-// 	return err == nil
-// }
+	r.HandleFunc("/api/account/authenticate", h.Authenticate).Methods("POST")
+}

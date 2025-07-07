@@ -23,6 +23,25 @@ func (r *InMemoryRepo[RecordType]) GetAll() []RecordType {
 	return values
 }
 
+func (r *InMemoryRepo[RecordType]) GetMatches(check func(RecordType) bool) []RecordType {
+	results := []RecordType{}
+	for _, item := range r.data {
+		if check(item) {
+			results = append(results, item)
+		}
+	}
+	return results
+}
+
+func (r *InMemoryRepo[RecordType]) GetMatch(check func(RecordType) bool) (*RecordType, bool) {
+	for _, item := range r.data {
+		if check(item) {
+			return &item, true
+		}
+	}
+	return nil, false
+}
+
 func (r *InMemoryRepo[RecordType]) GetById(id string) (*RecordType, bool) {
 	val, ok := r.data[id]
 	if !ok {
