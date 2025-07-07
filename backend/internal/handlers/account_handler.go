@@ -8,6 +8,7 @@ import (
 
 	"github.com/WilliamDann/upc-tracker/backend/internal/model"
 	"github.com/WilliamDann/upc-tracker/backend/internal/repository"
+	"github.com/WilliamDann/upc-tracker/backend/internal/shared"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 
@@ -56,6 +57,34 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(item)
 }
 
+// check user has permission before update
+func (h *AccountHandler) Update(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	authedId, ok := shared.GetAuthorizedUser(r)
+	if !ok || *authedId != vars["id"] {
+		http.Error(w, "permission error", http.StatusForbidden)
+		return
+	}
+
+	h.BaseHander.Update(w, r)
+}
+
+// check user has permission before delete
+func (h *AccountHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// check user has permission to delete
+	authedID, ok := shared.GetAuthorizedUser(r)
+	if !ok || *authedID != vars["id"] {
+		http.Error(w, "permission error", http.StatusForbidden)
+		return
+	}
+
+	// delete
+	h.BaseHander.Delete(w, r)
+}
+
 // handler for jwt creation
 func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	var item model.Account
@@ -89,7 +118,7 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	// create jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": item.ID,                               // Subject (user id)
+		"sub": (*lookup).ID,                          // Subject (user id)
 		"exp": time.Now().Add(time.Hour * 24).Unix(), // Expiration
 		"iat": time.Now().Unix(),                     // Issued at
 	})
@@ -106,12 +135,12 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 // routes
 func (h *AccountHandler) Route(r *mux.Router) {
-	r.HandleFunc("/api/account/all", h.GetAll).Methods("GET")
+	r.HandleFunc("/api/account/all", h.BaseHander.GetAll).Methods("GET")
+	r.HandleFunc("/api/account/{id}", h.BaseHander.GetById).Methods("GET")
 
 	r.HandleFunc("/api/account", h.Create).Methods("POST")
-	r.HandleFunc("/api/account/{id}", h.BaseHander.GetById).Methods("GET")
-	r.HandleFunc("/api/account/{id}", h.BaseHander.Update).Methods("PUT")
-	r.HandleFunc("/api/account/{id}", h.BaseHander.Delete).Methods("DELETE")
+	r.HandleFunc("/api/account/{id}", h.Update).Methods("PUT")
+	r.HandleFunc("/api/account/{id}", h.Delete).Methods("DELETE")
 
 	r.HandleFunc("/api/account/authenticate", h.Authenticate).Methods("POST")
 }
