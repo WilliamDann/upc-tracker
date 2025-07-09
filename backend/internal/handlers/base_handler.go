@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/WilliamDann/upc-tracker/backend/internal/repository"
 	"github.com/gorilla/mux"
@@ -26,14 +27,14 @@ func (h *BaseHander[Record]) GetAll(w http.ResponseWriter, r *http.Request) {
 
 func (h *BaseHander[Record]) GetById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
-	val, ok := h.repository.GetById(vars["id"])
-	if !ok {
-		http.Error(w, "an item with this id was not found", http.StatusNotFound)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	vals := h.repository.GetBy(map[string]any{"id": int64(id)})
 
-	json.NewEncoder(w).Encode(val)
+	json.NewEncoder(w).Encode(vals[0])
 }
 
 func (h *BaseHander[Record]) Create(w http.ResponseWriter, r *http.Request) {
@@ -45,10 +46,15 @@ func (h *BaseHander[Record]) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	fmt.Println(item)
 
 	// create in db and return with new id
-	item = h.repository.Create(item)
-	json.NewEncoder(w).Encode(item)
+	newItem, err := h.repository.Create(item)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(*newItem)
 }
 
 func (h *BaseHander[Record]) Update(w http.ResponseWriter, r *http.Request) {
@@ -62,10 +68,16 @@ func (h *BaseHander[Record]) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	// update in database
-	updated, ok := h.repository.Update(vars["id"], item)
-	if !ok {
-		http.Error(w, "Failed to update item", http.StatusBadRequest)
+	updated, err := h.repository.Update(int64(id), item)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -75,11 +87,17 @@ func (h *BaseHander[Record]) Update(w http.ResponseWriter, r *http.Request) {
 
 func (h *BaseHander[Record]) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	// remove from db
-	ok := h.repository.Delete(vars["id"])
-	if !ok {
-		http.Error(w, "failed to delete item", http.StatusBadRequest)
+	err = h.repository.Delete(int64(id))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

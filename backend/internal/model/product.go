@@ -5,16 +5,16 @@ import (
 )
 
 type Product struct {
-	ID   string `json:"id"`
-	UPC  string `json:"upc"`
-	Name string `json:"name"`
-	Desc string `json:"desc"`
+	ID    int64  `json:"id"`
+	UPC   string `json:"upc"`
+	Name  string `json:"name"`
+	Descr string `json:"descr"`
 }
 
-func (p *Product) GetID() string {
+func (p *Product) GetID() int64 {
 	return p.ID
 }
-func (p *Product) SetID(id string) {
+func (p *Product) SetID(id int64) {
 	p.ID = id
 }
 

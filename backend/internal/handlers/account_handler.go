@@ -53,8 +53,13 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 	item.Password = string(bytes)
 
 	// create in db and return with new id
-	item = *h.BaseHander.repository.Create(&item)
-	json.NewEncoder(w).Encode(item)
+	newitem, err := h.BaseHander.repository.Create(&item)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	json.NewEncoder(w).Encode(*newitem)
 }
 
 // check user has permission before update
@@ -103,14 +108,14 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// lookup associated account
-	lookup, ok := h.BaseHander.repository.GetMatch(func(x *model.Account) bool { return x.Email == item.Email })
-	if !ok {
-		http.Error(w, "authentication error", http.StatusUnauthorized)
+	lookup := h.BaseHander.repository.GetBy(map[string]any{"Email": item.Email})
+	if len(lookup) == 0 {
+		http.Error(w, "permission error", http.StatusForbidden)
 		return
 	}
 
 	// check password
-	err = bcrypt.CompareHashAndPassword([]byte((*lookup).Password), []byte(item.Password))
+	err = bcrypt.CompareHashAndPassword([]byte((*lookup[0]).Password), []byte(item.Password))
 	if err != nil {
 		http.Error(w, "authentication error", http.StatusUnauthorized)
 		return
@@ -118,7 +123,7 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	// create jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": (*lookup).ID,                          // Subject (user id)
+		"sub": (*lookup[0]).ID,                       // Subject (user id)
 		"exp": time.Now().Add(time.Hour * 24).Unix(), // Expiration
 		"iat": time.Now().Unix(),                     // Issued at
 	})
@@ -143,14 +148,14 @@ func (h *AccountHandler) My(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get user from db
-	user, ok := h.BaseHander.repository.GetById(*authedId)
-	if !ok {
+	users := h.BaseHander.repository.GetBy(map[string]any{"ID": authedId})
+	if len(users) == 0 {
 		http.Error(w, "permission error", http.StatusForbidden)
 		return
 	}
 
 	// send info
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(users[0])
 }
 
 // routes

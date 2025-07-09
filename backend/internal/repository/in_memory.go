@@ -1,78 +1,74 @@
 package repository
 
-import "strconv"
+import "reflect"
 
 // definition
 type InMemoryRepo[RecordType Identifiable] struct {
-	data map[string]RecordType
+	data map[int64]RecordType
 }
 
 // constructor
 func NewInMemoryRepo[RecordType Identifiable]() *InMemoryRepo[RecordType] {
-	return &InMemoryRepo[RecordType]{map[string]RecordType{}}
+	return &InMemoryRepo[RecordType]{map[int64]RecordType{}}
 }
 
 // operations
 func (r *InMemoryRepo[RecordType]) GetAll() []RecordType {
-	values := make([]RecordType, len(r.data))
-	i := 0
-	for _, value := range r.data {
-		values[i] = value
-		i++
+	objs := []RecordType{}
+	for _, val := range r.data {
+		objs = append(objs, val)
 	}
-	return values
+	return objs
 }
 
-func (r *InMemoryRepo[RecordType]) GetMatches(check func(RecordType) bool) []RecordType {
-	results := []RecordType{}
-	for _, item := range r.data {
-		if check(item) {
-			results = append(results, item)
+func (r *InMemoryRepo[RecordType]) GetBy(filter map[string]any) []RecordType {
+	var results []RecordType
+
+	for _, record := range r.data {
+		v := reflect.ValueOf(record)
+		// If record is a pointer, get the element it points to
+		if v.Kind() == reflect.Ptr {
+			v = v.Elem()
+		}
+
+		matches := true
+		for key, val := range filter {
+			fieldVal := v.FieldByName(key)
+			if !fieldVal.IsValid() {
+				// No such field, treat as no match
+				matches = false
+				break
+			}
+
+			// Compare the field's value with val
+			// Use Interface() to get the underlying value
+			if !reflect.DeepEqual(fieldVal.Interface(), val) {
+				matches = false
+				break
+			}
+		}
+
+		if matches {
+			results = append(results, record)
 		}
 	}
+
 	return results
 }
 
-func (r *InMemoryRepo[RecordType]) GetMatch(check func(RecordType) bool) (*RecordType, bool) {
-	for _, item := range r.data {
-		if check(item) {
-			return &item, true
-		}
-	}
-	return nil, false
-}
-
-func (r *InMemoryRepo[RecordType]) GetById(id string) (*RecordType, bool) {
-	val, ok := r.data[id]
-	if !ok {
-		return nil, false
-	}
-	return &val, true
-}
-
-func (r *InMemoryRepo[RecordType]) Create(record RecordType) RecordType {
-	id := strconv.Itoa(len(r.data))
+func (r *InMemoryRepo[RecordType]) Create(record RecordType) (*RecordType, error) {
+	id := int64(len(r.data))
 	record.SetID(id)
 	r.data[id] = record
-	return record
+	return &record, nil
 }
 
-func (r *InMemoryRepo[RecordType]) Update(id string, record RecordType) (*RecordType, bool) {
-	_, ok := r.data[id]
-	if !ok {
-		return nil, false
-	}
-	record.SetID(id)
+func (r *InMemoryRepo[RecordType]) Update(id int64, record RecordType) (*RecordType, error) {
 	r.data[id] = record
-	return &record, true
+	return &record, nil
 }
 
-func (r *InMemoryRepo[RecordType]) Delete(id string) bool {
-	_, ok := r.data[id]
-	if !ok {
-		return false
-	}
-
+func (r *InMemoryRepo[RecordType]) Delete(id int64) error {
 	delete(r.data, id)
-	return true
+	return nil
 }

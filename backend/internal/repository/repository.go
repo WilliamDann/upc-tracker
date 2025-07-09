@@ -2,13 +2,9 @@ package repository
 
 type Repository[RecordType Identifiable] interface {
 	GetAll() []RecordType
+	GetBy(map[string]any) []RecordType
 
-	GetMatches(check func(RecordType) bool) []RecordType
-	GetMatch(check func(RecordType) bool) (*RecordType, bool)
-
-	GetById(id string) (*RecordType, bool)
-
-	Create(item RecordType) RecordType
-	Update(id string, record RecordType) (*RecordType, bool)
-	Delete(id string) bool
+	Create(RecordType) (*RecordType, error)
+	Update(int64, RecordType) (*RecordType, error)
+	Delete(int64) error
 }

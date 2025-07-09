@@ -3,7 +3,7 @@ package model
 import "encoding/json"
 
 type Account struct {
-	ID       string `json:"id"`
+	ID       int64  `json:"id"`
 	Email    string `json:"email"`
 	Password string `json:"password"` // Hidden by custom marshall
 	Name     string `json:"name"`
@@ -22,9 +22,9 @@ func (a Account) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (a *Account) GetID() string {
+func (a *Account) GetID() int64 {
 	return a.ID
 }
-func (a *Account) SetID(id string) {
+func (a *Account) SetID(id int64) {
 	a.ID = id
 }

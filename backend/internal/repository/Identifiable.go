@@ -1,6 +1,6 @@
 package repository
 
 type Identifiable interface {
-	GetID() string
-	SetID(str string)
+	GetID() int64
+	SetID(str int64)
 }
