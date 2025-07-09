@@ -51,11 +51,9 @@ func Insert(table string, record any) (string, error) {
 
 	var columns []string
 	var placeholders []string
-	var values []interface{}
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-		value := v.Field(i)
 
 		tag := field.Tag.Get("json")
 		if tag == "" {
@@ -67,7 +65,6 @@ func Insert(table string, record any) (string, error) {
 
 		columns = append(columns, tag)
 		placeholders = append(placeholders, ":"+tag)
-		values = append(values, value.Interface())
 	}
 
 	return fmt.Sprintf(
