@@ -4,6 +4,6 @@ export default class Product extends Resource
 {
     constructor()
     {
-        super('products', { Name: "", UPC: "", Desc: "" })
+        super('products', { Name: "", UPC: "", Descr: "" })
     }
 }
