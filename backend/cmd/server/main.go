@@ -26,14 +26,17 @@ func main() {
 	// create repos
 	productRepo := repository.NewPostgresRepo[*model.Product](db, "products")
 	accountRepo := repository.NewPostgresRepo[*model.Account](db, "accounts")
+	placeRepo := repository.NewPostgresRepo[*model.Place](db, "places")
 
 	// create handlers
 	productHander := handlers.NewProductHandler(productRepo)
 	accountHandler := handlers.NewAccountHandler(accountRepo)
+	placeHanlder := handlers.NewPlaceHandler(placeRepo)
 
 	// create routes
 	productHander.Route(r)
 	accountHandler.Route(r)
+	placeHanlder.Route(r)
 
 	// Start server
 	fmt.Println("Server running on http://localhost:8080")

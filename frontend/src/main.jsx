@@ -12,6 +12,7 @@ import Home from './Home.jsx';
 
 import Product from './resources/Product.jsx'
 import Account from './resources/Account.jsx'
+import Place from './resources/Place.jsx'
 
 import Signin from './pages/Signin.jsx'
 
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
 
         {new Account().Routes({})}
         {new Product().Routes({})}
+        {new Place().Routes({})}
       </Route>
 
       <Route path="signin" element={<Signin />} />

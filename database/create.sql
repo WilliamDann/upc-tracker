@@ -20,3 +20,11 @@ create table products (
     name varchar(255) not null,
     descr text
 );
+
+create table places (
+    id bigserial primary key,
+    name varchar(255) not null,
+    address varchar(255) not null,
+    city varchar(255) not null,
+    state varchar(255) not null
+)
