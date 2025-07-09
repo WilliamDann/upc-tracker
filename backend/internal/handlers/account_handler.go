@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/WilliamDann/upc-tracker/backend/internal/model"
@@ -123,7 +124,7 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	// create jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": (*lookup[0]).ID,                       // Subject (user id)
+		"sub": strconv.FormatInt(lookup[0].ID, 10),   // Subject (user id)
 		"exp": time.Now().Add(time.Hour * 24).Unix(), // Expiration
 		"iat": time.Now().Unix(),                     // Issued at
 	})
